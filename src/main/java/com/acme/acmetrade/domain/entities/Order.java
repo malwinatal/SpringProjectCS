@@ -12,7 +12,7 @@ import com.acme.acmetrade.domain.OrderType;
 public class Order {
 	private UUID id=UUID.randomUUID();
 	private UUID traderId;
-	private UUID companyId;
+	private String companyTickerSymbol;
 	private OrderSide OrderSide;
 	private OrderType OrderType;
 	private double price;
@@ -24,11 +24,11 @@ public class Order {
 		
 	}
 	
-	public Order(UUID traderId, UUID companyId, OrderSide OrderSide, OrderType OrderType, double price, int volume, Date placementTime,
+	public Order(UUID traderId, String companyTickerSymbol, OrderSide OrderSide, OrderType OrderType, double price, int volume, Date placementTime,
 			OrderStatus OrderStatus) {
 		
 		this.traderId = traderId;
-		this.companyId = companyId;
+		this.companyTickerSymbol = companyTickerSymbol;
 		this.OrderSide = OrderSide;
 		this.OrderType = OrderType;
 		this.price = price;
@@ -45,12 +45,12 @@ public class Order {
 		this.traderId = traderId;
 	}
 
-	public UUID getCompanyId() {
-		return companyId;
+	public String getCompanyTickerSymbol() {
+		return companyTickerSymbol;
 	}
 
-	public void setCompanyId(UUID companyId) {
-		this.companyId = companyId;
+	public void setCompanyTickerSymbol(String companyTickerSymbol) {
+		this.companyTickerSymbol = companyTickerSymbol;
 	}
 
 	public OrderSide getOrderSide() {
