@@ -29,5 +29,6 @@ public class OrderService {
 			orderList.add(order);
 			//Order myOrder  = new MarketOrder(Currency.EUR, 100, Side.BUY);
 			myDB.placeOrder(order);
+
 	}
 }
