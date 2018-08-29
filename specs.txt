@@ -1,0 +1,65 @@
+ENTITIES
+
+Trader
+- id
+- firstName
+- lastName
+- address
+- email
+- phone
+- canTrade
+
+Companies
+- id
+- name
+- sector
+- tickerSymbol
+
+MarketSector
+- id
+- sectorName
+- description
+
+Order
+- id
+- traderId
+-  (buy or sell)
+- type (limit or market)
+- amount
+
+----------------------------
+REST CONTROLLERS
+annotated with @RestController
+
+TraderService
+methods that catch URL
+for every method, spring security checks whether you are an admin
+- createTrader: POST method /trader with a trader object in the body of the request
+- deleteTrader: DELETE method /trader with a trader object in the body of the request
+- listTraders: GET /trader
+- getTrader: GET /trader/1
+
+
+OrderService
+for every method, spring security checks whether you are a trader
+methods that catch URL
+- placeOrder: POST method /order with an order object in the body of the request
+=> the method checks whether you have the boolean attribute canTrade set to true
+=> the login is compared with the ids of the rows in table Order
+
+
+-----------------------------
+
+REPOSITORIES (DB ACCESS)
+annotated with @Repository
+
+TraderRepository
+- createTrader: 
+- deleteTrader: 
+- listTraders: 
+- getTrader:
+
+OrderRepository
+- placeOrder
+- deleteOrder
+- updateOrder
