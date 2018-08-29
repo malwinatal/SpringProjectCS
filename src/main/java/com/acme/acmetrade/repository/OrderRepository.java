@@ -23,11 +23,13 @@ public class OrderRepository {
 	
 	@Transactional
 	public UUID placeOrder(Order order) {
-		
-		jdbcTemplate.update("insert into MARKET_ORDERS(ORDER_ID, TRADER_ID, COMPANY_ID,"
+		if (order.getVolume() < 0) {
+			
+		}
+		jdbcTemplate.update("insert into MARKET_ORDERS(ORDER_ID, TRADER_ID, TICKER_SYMBOL,"
 				+ 			"ORDER_SIDE, ORDER_TYPE, PRICE, VOLUME, PLACEMENT_TIME, ORDER_STATUS)"
 				+ "			values (?,?,?,?,?,?,?,?,?)", 
-							order.getId(), order.getTraderId(), order.getCompanyId(),
+							order.getId(), order.getTraderId(), order.getCompanyTickerSymbol(),
 							order.getOrderSide().toString(), order.getOrderType().toString(), order.getPrice(),
 							order.getVolume(), order.getPlacementTime(), order.getOrderStatus().toString());
 		return order.getId();
