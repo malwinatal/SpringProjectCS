@@ -1,9 +1,13 @@
 package com.acme.acmetrade.exceptions;
 
-public class MarketSectorNameAlreadyExistsException extends Exception{
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class MarketSectorNameAlreadyExistsException extends RuntimeException{
 	
 	public MarketSectorNameAlreadyExistsException(String message) {
-		super("Error: a market sector already exists with this name. Could not insert in the DB.");
+		super(message);
 		
 	}
 

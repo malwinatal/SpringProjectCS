@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.acmetrade.domain.entities.MarketSector;
+import com.acme.acmetrade.exceptions.MarketSectorNameAlreadyExistsException;
 
 @Repository
 public class MarketSectorRepository {
@@ -33,7 +34,7 @@ public class MarketSectorRepository {
 			jdbcTemplate.update("insert into MARKET_SECTOR(ID, NAME, DESCRIPTION) values (?,?,?)", marketSector.getId(),
 					marketSector.getName(), marketSector.getDescription());
 		} else {
-			
+			throw new MarketSectorNameAlreadyExistsException("Error: a market sector already exists with this name. Could not insert in the DB.");
 		}
 		
 		
@@ -55,7 +56,7 @@ public class MarketSectorRepository {
 	
 	@Transactional
 	public List<MarketSector> getMarketSectorByName(String name) {
-		List<MarketSector> marketSectors = jdbcTemplate.query("select * from MARKET_SECTOR where NAME = " + name, new RowMapper<MarketSector>() {
+		List<MarketSector> marketSectors = jdbcTemplate.query("select * from MARKET_SECTOR where NAME = '" + name + "'", new RowMapper<MarketSector>() {
 			@Override
 			public MarketSector mapRow(ResultSet rs, int rowNum) throws SQLException {
 				MarketSector marketSector = new MarketSector();
