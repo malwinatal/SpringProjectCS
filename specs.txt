@@ -7,9 +7,9 @@ Trader
 - address
 - email
 - phone
-- canTrade
+- canTrade: default false
 
-Companies
+Company
 - id
 - name
 - sector
@@ -17,15 +17,31 @@ Companies
 
 MarketSector
 - id
-- sectorName
+- name
 - description
 
 Order
 - id
 - traderId
--  (buy or sell)
+- companyId
+- side (buy or sell)
 - type (limit or market)
-- amount
+- price
+- quantity
+- placementTime
+- status
+
+----------------
+ENUMS
+
+OrderStatus (enum)
+possible values: open, cancelled, fulfilled
+
+OrderSide
+buy, sell
+
+OrderType
+market, limit
 
 ----------------------------
 REST CONTROLLERS
@@ -42,10 +58,16 @@ for every method, spring security checks whether you are an admin
 
 OrderService
 for every method, spring security checks whether you are a trader
-methods that catch URL
+methods that catch URL 
 - placeOrder: POST method /order with an order object in the body of the request
 => the method checks whether you have the boolean attribute canTrade set to true
 => the login is compared with the ids of the rows in table Order
+
+CompanyService
+similar to traderservice
+
+MarketService
+similar to traderservice
 
 
 -----------------------------
