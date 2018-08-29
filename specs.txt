@@ -27,7 +27,7 @@ Order
 - side (buy or sell)
 - type (limit or market)
 - price
-- quantity
+- volume
 - placementTime
 - status
 
