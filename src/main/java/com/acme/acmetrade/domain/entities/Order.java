@@ -7,6 +7,8 @@ import com.acme.acmetrade.domain.OrderSide;
 import com.acme.acmetrade.domain.OrderStatus;
 import com.acme.acmetrade.domain.OrderType;
 
+
+
 public class Order {
 	private UUID id=UUID.randomUUID();
 	private UUID traderId;
@@ -17,6 +19,10 @@ public class Order {
 	private int volume;
 	private Date placementTime;
 	private  OrderStatus OrderStatus;
+	
+	public Order() {
+		
+	}
 	
 	public Order(UUID traderId, UUID companyId, OrderSide OrderSide, OrderType OrderType, double price, int volume, Date placementTime,
 			OrderStatus OrderStatus) {
