@@ -43,10 +43,27 @@ public class MarketSectorService {
 		return marketSector;
 	}
 	
+	/**
+	 * Lists all market sectors
+	 * @return
+	 */
 	@RequestMapping(value="/all", method = RequestMethod.GET)
 	public List<MarketSector> listMarketSectors() {
 		return marketSectorRepository.listMarketSectors();
 	}
+	
+	/**
+	 * updates a market order's description
+	 * @param marketSector
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.PATCH)
+	public MarketSector updateMarketSectorDescription(@RequestBody MarketSector marketSector) {
+		marketSectorRepository.updateMarketSectorDescription(marketSector);
+		return marketSector;
+	}
+	
+	
 	
 	
 }
