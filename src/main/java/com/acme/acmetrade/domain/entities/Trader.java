@@ -1,4 +1,4 @@
-package com.acme.acmetrade.domain;
+package com.acme.acmetrade.domain.entities;
 
 import java.util.UUID;
 
