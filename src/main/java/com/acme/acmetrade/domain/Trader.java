@@ -1,7 +1,9 @@
 package com.acme.acmetrade.domain;
 
+import java.util.UUID;
+
 public class Trader {
-	private int id;
+	private UUID id =UUID.randomUUID();
 	private String firstName;
 	private String lastName;
 	private String address;
@@ -9,9 +11,9 @@ public class Trader {
 	private String phone;
 	private boolean canTrade;
 	
-	public Trader(int id, String firstName, String lastName, String address, String email, String phone,
+	public Trader(String firstName, String lastName, String address, String email, String phone,
 			boolean canTrade) {
-		this.id = id;
+		
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.address = address;
@@ -20,12 +22,8 @@ public class Trader {
 		this.canTrade = canTrade;
 	}
 
-	public int getId() {
+	public UUID getId() {
 		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public String getFirstName() {
