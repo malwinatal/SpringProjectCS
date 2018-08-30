@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class MarketSectorNotFoundException extends RuntimeException{
 	
 	public MarketSectorNotFoundException(UUID id) {
-		super("Could not find Market Sector with id " + id);
-		
+		super("Could not find Market Sector with id " + id);	
 	}
 
 }

@@ -46,8 +46,7 @@ public class MarketSectorRepository {
 			jdbcTemplate.update("insert into MARKET_SECTOR(ID, NAME, DESCRIPTION) values (?,?,?)", marketSector.getId(),
 					marketSector.getName(), marketSector.getDescription());
 		} else {
-			throw new MarketSectorNameAlreadyExistsException(
-					"Error: a market sector already exists with this name. Could not insert in the DB.");
+			throw new MarketSectorNameAlreadyExistsException(marketSector.getName());
 		}
 
 	}
@@ -128,8 +127,7 @@ public class MarketSectorRepository {
 			if (companiesOfGivenSector.isEmpty()) {
 				jdbcTemplate.update("DELETE FROM MARKET_SECTOR where ID = ?", marketSectorID);
 			} else {
-				throw new CompaniesExistForGivenSectorException("Error: the market sector with id " + marketSectorID
-						+ " is referenced by companies. It could therefore not be deleted.");
+				throw new CompaniesExistForGivenSectorException(marketSectorID);
 			}
 
 		}
@@ -137,9 +135,9 @@ public class MarketSectorRepository {
 	}
 
 	/**
-	 * Looks up for a market sector by name
+	 * Looks up for a market sector by id
 	 * 
-	 * @param name
+	 * @param id
 	 * @return
 	 */
 	@Transactional

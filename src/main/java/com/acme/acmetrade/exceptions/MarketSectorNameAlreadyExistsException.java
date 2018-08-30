@@ -6,9 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 public class MarketSectorNameAlreadyExistsException extends RuntimeException{
 	
-	public MarketSectorNameAlreadyExistsException(String message) {
-		super(message);
-		
+	public MarketSectorNameAlreadyExistsException(String name) {
+		super("Error: a market sector already exists with name '" + name + "'. Could not insert in the DB.");
 	}
 
 }
