@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.http.HttpException;
@@ -24,6 +26,7 @@ import com.acme.acmetrade.domain.OrderStatus;
 import com.acme.acmetrade.domain.OrderType;
 import com.acme.acmetrade.domain.entities.MarketSector;
 import com.acme.acmetrade.domain.entities.Order;
+import com.acme.acmetrade.exceptions.MarketOrderNotFoundException;
 
 
 
@@ -78,7 +81,6 @@ public class OrderRepository {
 						OrderStatus.CANCELLED.toString(), selectedOrderId );
 			}
 		}
-
 	}
 	
 	public List<Order> getOrderById(UUID id){
@@ -108,8 +110,31 @@ public class OrderRepository {
 			return selectedOrder;
 		}
 	}
-	
-	
+
+	/**
+	 * Looks for an order based on given id. If it exists, it updates only price, volume and order type. Else throws exception.
+	 * @param order
+	 */
+	public void updateOrder(Order order) {
+		List<Order> ordersWithGivenId = getOrderById(order.getId());
+		if (ordersWithGivenId.isEmpty()) {
+			throw new MarketOrderNotFoundException("Error: the order with id " + order.getId()
+					+ " could not be found therefore not updated.");
+		} else {
+			if (ordersWithGivenId.get(0).getCompanyTickerSymbol() != order.getCompanyTickerSymbol()
+					&& ordersWithGivenId.get(0).getPrice() == order.getPrice()
+					&& ordersWithGivenId.get(0).getVolume() == order.getVolume()
+					&& ordersWithGivenId.get(0).getOrderType() == order.getOrderType()) {
+				System.out.println("Warning: Cannot update stock ticker");
+			}
+			else {
+				jdbcTemplate.update("update MARKET_ORDERS SET VOLUME = ?, PRICE = ?, ORDER_TYPE = ? where ORDER_ID = ?",
+						order.getVolume(), order.getPrice(), order.getOrderType(), order.getId());
+			}
+			
+		}
+	}
+		
 }
 
 	

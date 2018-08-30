@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.acme.acmetrade.domain.OrderStatus;
 import com.acme.acmetrade.domain.entities.Order;
 import com.acme.acmetrade.repository.OrderRepository;
 
@@ -39,6 +40,22 @@ public class OrderService {
 			//Order myOrder  = new MarketOrder(Currency.EUR, 100, Side.BUY);
 			
 			myDB.cancelOrder(UUID.fromString(orderID));
+
+	}
+	
+	/**
+	 * updates a trader order
+	 * @param order
+	 * @return
+	 */
+	@RequestMapping(value="/order", method = RequestMethod.PATCH) //change URI
+	public void updateOrder(@RequestBody Order order) {
+		if (order.getOrderStatus()== OrderStatus.FULFILLED || order.getOrderStatus()== OrderStatus.CANCELLED) {
+			System.out.println("Warning: Order cannot be updated as it is already fulfilled or cancelled");
+		} 
+		else {
+			myDB.updateOrder(order);
+		}
 
 	}
 }
