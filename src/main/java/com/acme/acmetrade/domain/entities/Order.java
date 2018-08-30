@@ -40,6 +40,7 @@ public class Order {
 	public UUID getTraderId() {
 		return traderId;
 	}
+	
 
 	public void setTraderId(UUID traderId) {
 		this.traderId = traderId;
@@ -104,6 +105,12 @@ public class Order {
 	public UUID getId() {
 		return id;
 	}
+	
+	public void setId(UUID id) {
+		this.id = id;
+	}
+	
+	
 	
 	
 	

@@ -17,6 +17,7 @@ import com.acme.acmetrade.repository.OrderRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class OrderService {
@@ -29,6 +30,15 @@ public class OrderService {
 			orderList.add(order);
 			//Order myOrder  = new MarketOrder(Currency.EUR, 100, Side.BUY);
 			myDB.placeOrder(order);
+
+	}
+	
+	@RequestMapping(value="/order", method = RequestMethod.PATCH)
+	public void cancelOrder(@RequestParam("orderID") String orderID) {
+			//orderList.add(order);
+			//Order myOrder  = new MarketOrder(Currency.EUR, 100, Side.BUY);
+			
+			myDB.cancelOrder(UUID.fromString(orderID));
 
 	}
 }
