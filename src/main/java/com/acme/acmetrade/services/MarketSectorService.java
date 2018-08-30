@@ -1,11 +1,13 @@
 package com.acme.acmetrade.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acme.acmetrade.domain.entities.MarketSector;
@@ -61,6 +63,13 @@ public class MarketSectorService {
 	public MarketSector updateMarketSectorDescription(@RequestBody MarketSector marketSector) {
 		marketSectorRepository.updateMarketSectorDescription(marketSector);
 		return marketSector;
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE)
+	public void deleteMarketOrderById(@RequestParam("id") String id) {
+		if (id == null || id.trim().isEmpty())
+			throw new IllegalArgumentException("Invalid market order id provided");
+		marketSectorRepository.deleteMarketSectorById(UUID.fromString(id));
 	}
 	
 	

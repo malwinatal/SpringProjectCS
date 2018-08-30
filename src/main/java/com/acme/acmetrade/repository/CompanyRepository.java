@@ -34,7 +34,7 @@ public class CompanyRepository {
 	 * @return
 	 */
 	@Transactional
-	public List<Company> getCompaniesBySectorId(MarketSector marketSector) {
+	public List<Company> getCompaniesBySector(MarketSector marketSector) {
 		return jdbcTemplate.query("select * from COMPANY WHERE MARKET_SECTOR_ID = '" + marketSector.getId() + "'", new RowMapper<Company>() {
 			@Override
 			public Company mapRow(ResultSet rs, int rowNum) throws SQLException {

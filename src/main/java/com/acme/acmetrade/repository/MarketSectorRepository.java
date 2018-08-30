@@ -12,22 +12,29 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.acme.acmetrade.domain.entities.Company;
 import com.acme.acmetrade.domain.entities.MarketSector;
+import com.acme.acmetrade.exceptions.CompaniesExistForGivenSectorException;
 import com.acme.acmetrade.exceptions.MarketOrderNotFoundException;
 import com.acme.acmetrade.exceptions.MarketSectorNameAlreadyExistsException;
+import com.acme.acmetrade.exceptions.MarketSectorNotFoundException;
 
 @Repository
 public class MarketSectorRepository {
 
 	private final JdbcTemplate jdbcTemplate;
+	private final CompanyRepository companyRepository;
 
 	@Autowired
-	public MarketSectorRepository(JdbcTemplate jdbcTemplate) {
+	public MarketSectorRepository(JdbcTemplate jdbcTemplate, CompanyRepository companyRepository) {
 		this.jdbcTemplate = jdbcTemplate;
+		this.companyRepository = companyRepository;
 	}
 
 	/**
-	 * Checks if market sector exists with given name, and if it does not, creates it
+	 * Checks if market sector exists with given name, and if it does not, creates
+	 * it
+	 * 
 	 * @param marketSector
 	 */
 	@Transactional
@@ -47,6 +54,7 @@ public class MarketSectorRepository {
 
 	/**
 	 * Lists all market orders
+	 * 
 	 * @return
 	 */
 	@Transactional
@@ -65,6 +73,7 @@ public class MarketSectorRepository {
 
 	/**
 	 * Looks up for a market sector by name
+	 * 
 	 * @param name
 	 * @return
 	 */
@@ -88,7 +97,9 @@ public class MarketSectorRepository {
 	}
 
 	/**
-	 * Looks for a market sector based on given name. If it exists, updates it. Else throws exception.
+	 * Looks for a market sector based on given name. If it exists, updates it. Else
+	 * throws exception.
+	 * 
 	 * @param marketSector
 	 */
 	public void updateMarketSectorDescription(MarketSector marketSector) {
@@ -102,6 +113,52 @@ public class MarketSectorRepository {
 					marketSector.getDescription(), marketSector.getName());
 		}
 
+	}
+
+	public void deleteMarketSectorById(UUID marketSectorID) {
+
+		List<MarketSector> marketSectorsWithGivenId = getMarketSectorById(marketSectorID);
+
+		if (marketSectorsWithGivenId.isEmpty()) {
+			throw new MarketSectorNotFoundException(marketSectorID);
+		} else {
+			// we only care about the first market sector in the list (there should be only one due to unicity)
+			List<Company> companiesOfGivenSector = companyRepository
+					.getCompaniesBySector(marketSectorsWithGivenId.get(0));
+			if (companiesOfGivenSector.isEmpty()) {
+				jdbcTemplate.update("DELETE FROM MARKET_SECTOR where ID = ?", marketSectorID);
+			} else {
+				throw new CompaniesExistForGivenSectorException("Error: the market sector with id " + marketSectorID
+						+ " is referenced by companies. It could therefore not be deleted.");
+			}
+
+		}
+
+	}
+
+	/**
+	 * Looks up for a market sector by name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	@Transactional
+	public List<MarketSector> getMarketSectorById(UUID id) {
+		List<MarketSector> marketSectors = jdbcTemplate.query("select * from MARKET_SECTOR where ID = '" + id + "'",
+				new RowMapper<MarketSector>() {
+					@Override
+					public MarketSector mapRow(ResultSet rs, int rowNum) throws SQLException {
+						MarketSector marketSector = new MarketSector();
+						marketSector.setId(UUID.fromString(rs.getString("ID")));
+						marketSector.setName(rs.getString("NAME"));
+						marketSector.setDescription(rs.getString("DESCRIPTION"));
+						return marketSector;
+					}
+				});
+		if (marketSectors == null) {
+			return new ArrayList<MarketSector>();
+		}
+		return marketSectors;
 	}
 
 }
