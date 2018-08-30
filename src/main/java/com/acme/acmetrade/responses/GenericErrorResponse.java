@@ -1,4 +1,4 @@
-package com.acme.acmetrade.endpoints;
+package com.acme.acmetrade.responses;
 
 public class GenericErrorResponse {
     private String errorCode;

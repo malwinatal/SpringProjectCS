@@ -66,7 +66,8 @@ public class CompanyRepository {
 		if (marketSectorsWithGivenID.isEmpty()) {
 			throw new MarketSectorNotFoundException(sectorId);
 		} else {
-			List<Company> companiesWithGivenNameAndTicker = getCompaniesByNameAndTicker(companyName,tickerSymbol,marketSectorsWithGivenID.get(0));
+			List<Company> companiesWithGivenNameAndTicker = getCompaniesByNameAndTicker(companyName, tickerSymbol,
+					marketSectorsWithGivenID.get(0));
 
 			if (companiesWithGivenNameAndTicker.isEmpty()) {
 				jdbcTemplate.update("insert into COMPANY(ID, NAME, MARKET_SECTOR_ID, TICKER_SYMBOL) values (?,?,?,?)",
@@ -86,8 +87,10 @@ public class CompanyRepository {
 	 * @return
 	 */
 	@Transactional
-	public List<Company> getCompaniesByNameAndTicker(String companyName, String tickerSymbol, MarketSector marketSector) {
-		List<Company> Company = jdbcTemplate.query("select * from COMPANY where NAME = '" + companyName + "' OR TICKER_SYMBOL = '" + tickerSymbol + "'",
+	public List<Company> getCompaniesByNameAndTicker(String companyName, String tickerSymbol,
+			MarketSector marketSector) {
+		List<Company> Company = jdbcTemplate.query(
+				"select * from COMPANY where NAME = '" + companyName + "' OR TICKER_SYMBOL = '" + tickerSymbol + "'",
 				new RowMapper<Company>() {
 					@Override
 					public Company mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -105,15 +108,9 @@ public class CompanyRepository {
 		return Company;
 	}
 
-
 	public List<Company> listCompany() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public void updateCompanyName(Company company) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
