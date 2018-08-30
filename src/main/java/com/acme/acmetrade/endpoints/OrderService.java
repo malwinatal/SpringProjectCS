@@ -48,8 +48,9 @@ public class OrderService {
 	 * @param order
 	 * @return
 	 */
-	@RequestMapping(value="/order", method = RequestMethod.PATCH) //change URI
+	@RequestMapping(value="/order/update", method = RequestMethod.PATCH) //change URI
 	public void updateOrder(@RequestBody Order order) {
+
 		if (order.getOrderStatus()== OrderStatus.FULFILLED || order.getOrderStatus()== OrderStatus.CANCELLED) {
 			System.out.println("Warning: Order cannot be updated as it is already fulfilled or cancelled");
 		} 

@@ -27,6 +27,10 @@ import com.acme.acmetrade.domain.OrderType;
 import com.acme.acmetrade.domain.entities.MarketSector;
 import com.acme.acmetrade.domain.entities.Order;
 import com.acme.acmetrade.exceptions.MarketOrderNotFoundException;
+import com.acme.acmetrade.exceptions.OrderAlreadyCancelledException;
+import com.acme.acmetrade.exceptions.OrderAlreadyFulfilledException;
+import com.acme.acmetrade.exceptions.OrderNegativeVolumeException;
+import com.acme.acmetrade.exceptions.OrderNotFoundException;
 
 
 
@@ -43,9 +47,7 @@ public class OrderRepository {
 	@Transactional
 	public UUID placeOrder(Order order) {
 		if (order.getVolume() < 0) {
-			System.out.println("ERROR 400: BAD REQUEST");
-			return null;
-			
+			throw new OrderNegativeVolumeException("The volume of the traded order has to be a positive integer");
 		}
 		else {
 		//make the check if the ticker company name is included in the listed companies	
@@ -64,16 +66,16 @@ public class OrderRepository {
 		
 		List<Order> selectedOrder = getOrderById(orderId);
 		if (selectedOrder.size() ==0){
-			System.out.println("Order not found");
+			throw new OrderNotFoundException("The order: " + orderId + " does not exist");
 		}
 		else {
 			UUID selectedOrderId = selectedOrder.get(0).getId();
 			OrderStatus selectedOrderStatus = selectedOrder.get(0).getOrderStatus();
 			if (selectedOrderStatus == OrderStatus.FULFILLED ) {
-				System.out.println("Order already fulfilled");
+				throw new OrderAlreadyFulfilledException("The order: " + selectedOrderId + " has already been fulfilled");
 			}
 			else if (selectedOrderStatus == OrderStatus.CANCELLED) {
-				System.out.println("Order already cancelled");
+				throw new OrderAlreadyCancelledException("The order: " + selectedOrderId + " has already been cancelled");
 			}
 			else {
 				System.out.println("Update the order");
@@ -117,6 +119,7 @@ public class OrderRepository {
 	 */
 	public void updateOrder(Order order) {
 		List<Order> ordersWithGivenId = getOrderById(order.getId());
+		System.out.println(ordersWithGivenId.get(0).getId());
 		if (ordersWithGivenId.isEmpty()) {
 			throw new MarketOrderNotFoundException("Error: the order with id " + order.getId()
 					+ " could not be found therefore not updated.");
@@ -124,12 +127,18 @@ public class OrderRepository {
 			if (ordersWithGivenId.get(0).getCompanyTickerSymbol() != order.getCompanyTickerSymbol()
 					&& ordersWithGivenId.get(0).getPrice() == order.getPrice()
 					&& ordersWithGivenId.get(0).getVolume() == order.getVolume()
-					&& ordersWithGivenId.get(0).getOrderType() == order.getOrderType()) {
+					&& ordersWithGivenId.get(0).getOrderType().toString() == order.getOrderType().toString()) {
 				System.out.println("Warning: Cannot update stock ticker");
 			}
 			else {
-				jdbcTemplate.update("update MARKET_ORDERS SET VOLUME = ?, PRICE = ?, ORDER_TYPE = ? where ORDER_ID = ?",
-						order.getVolume(), order.getPrice(), order.getOrderType(), order.getId());
+				if (ordersWithGivenId.get(0).getOrderStatus() == OrderStatus.CANCELLED || ordersWithGivenId.get(0).getOrderStatus() == OrderStatus.FULFILLED) {
+					System.out.println("Cannot update an already fulfilled/cancelled order");
+				}
+				else {
+					jdbcTemplate.update("update MARKET_ORDERS SET VOLUME = ?, PRICE = ?, ORDER_TYPE = ? where ORDER_ID = ?",
+							order.getVolume(), order.getPrice(), order.getOrderType().toString(), order.getId());
+				}
+				
 			}
 			
 		}
