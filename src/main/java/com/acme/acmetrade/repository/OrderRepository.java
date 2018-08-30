@@ -31,6 +31,7 @@ import com.acme.acmetrade.exceptions.OrderAlreadyCancelledException;
 import com.acme.acmetrade.exceptions.OrderAlreadyFulfilledException;
 import com.acme.acmetrade.exceptions.OrderNegativeVolumeException;
 import com.acme.acmetrade.exceptions.OrderNotFoundException;
+import com.acme.acmetrade.exceptions.OrderNotUpdatedException;
 
 
 
@@ -121,18 +122,18 @@ public class OrderRepository {
 		List<Order> ordersWithGivenId = getOrderById(order.getId());
 		System.out.println(ordersWithGivenId.get(0).getId());
 		if (ordersWithGivenId.isEmpty()) {
-			throw new MarketOrderNotFoundException("Error: the order with id " + order.getId()
+			throw new OrderNotFoundException("Error: the order with id " + order.getId()
 					+ " could not be found therefore not updated.");
 		} else {
 			if (ordersWithGivenId.get(0).getCompanyTickerSymbol() != order.getCompanyTickerSymbol()
 					&& ordersWithGivenId.get(0).getPrice() == order.getPrice()
 					&& ordersWithGivenId.get(0).getVolume() == order.getVolume()
 					&& ordersWithGivenId.get(0).getOrderType().toString() == order.getOrderType().toString()) {
-				System.out.println("Warning: Cannot update stock ticker");
+				throw new OrderNotUpdatedException("Error: Cannot update stock ticker");
 			}
 			else {
 				if (ordersWithGivenId.get(0).getOrderStatus() == OrderStatus.CANCELLED || ordersWithGivenId.get(0).getOrderStatus() == OrderStatus.FULFILLED) {
-					System.out.println("Cannot update an already fulfilled/cancelled order");
+					throw new OrderNotUpdatedException("Error: Cannot update an already fulfilled/cancelled order");
 				}
 				else {
 					jdbcTemplate.update("update MARKET_ORDERS SET VOLUME = ?, PRICE = ?, ORDER_TYPE = ? where ORDER_ID = ?",
