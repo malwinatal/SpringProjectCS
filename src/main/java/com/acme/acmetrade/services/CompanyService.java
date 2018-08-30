@@ -1,13 +1,14 @@
 package com.acme.acmetrade.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.acme.acmetrade.domain.entities.Company;
 import com.acme.acmetrade.repository.CompanyRepository;
 
@@ -16,11 +17,11 @@ import com.acme.acmetrade.repository.CompanyRepository;
 @RequestMapping("/company")
 public class CompanyService {
 	
-	private CompanyRepository CompanyRepository;
+	private CompanyRepository companyRepository;
 	
 	@Autowired
-	public CompanyService(CompanyRepository CompanyRepository) {
-		this.CompanyRepository = CompanyRepository;
+	public CompanyService(CompanyRepository companyRepository) {
+		this.companyRepository = companyRepository;
 	}
 	
 	/**
@@ -33,14 +34,31 @@ public class CompanyService {
 	}
 
 	/**
-	 * Create a Company based on data given by the user
+	 * Create a Company based on data given by the user in the URL
 	 * @param Company
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public Company createCompany(@RequestBody Company Company) {
-		CompanyRepository.addCompany(Company);
-		return Company;
+	public void createCompany(@RequestParam("name") String companyName,@RequestParam("tickersymbol") String tickerSymbol, @RequestParam("sectorId") String marketSectorId) {
+		// TODO: If at least one parameter is missing or does not have a value, throw exception
+		if(companyName == null || companyName.isEmpty())
+			throw new IllegalArgumentException("Argument Companyname is missing");
+		
+		if(tickerSymbol == null || tickerSymbol.isEmpty())
+			throw new IllegalArgumentException("Argument Tickersymbol is missing");
+		
+		
+		if(marketSectorId == null || marketSectorId.isEmpty()) {
+			
+		} else {
+			try {
+				UUID marketSectorUuid = UUID.fromString(marketSectorId);
+				companyRepository.addCompany(companyName,tickerSymbol,marketSectorUuid);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("MarketSector ID has a bad format");
+			}
+		}
+		
 	}
 	
 	/**
@@ -49,7 +67,7 @@ public class CompanyService {
 	 */
 	@RequestMapping(value="/all", method = RequestMethod.GET)
 	public List<Company> listCompany() {
-		return CompanyRepository.listCompany();
+		return companyRepository.listCompany();
 	}
 	
 	/**
@@ -59,7 +77,7 @@ public class CompanyService {
 	 */
 	@RequestMapping(method = RequestMethod.PATCH)
 	public Company updateCompanyName(@RequestBody Company Company) {
-		CompanyRepository.updateCompanyName(Company);
+		companyRepository.updateCompanyName(Company);
 		return Company;
 	}
 	
