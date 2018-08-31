@@ -119,6 +119,7 @@ public class OrderRepository {
 	 * Looks for an order based on given id. If it exists, it updates only price, volume and order type. Else throws exception.
 	 * @param order
 	 */
+	@Transactional
 	public void updateOrder(Order order) {
 		List<Order> ordersWithGivenId = getOrderById(order.getId());
 		System.out.println(ordersWithGivenId.get(0).getId());
@@ -146,11 +147,37 @@ public class OrderRepository {
 		}
 	}
 
+
 //	public void filterOrder(Map<String, String> customQuery) {
 //		// TODO Auto-generated method stub
 //		//check how to get multiple rows from a query
 //		
 //	}
+
+	
+//	@Transactional(readOnly=true)
+//    public List<Order> findAllOrders() {
+//        return jdbcTemplate.query("select * from MARKET_ORDERS",
+//                (new RowMapper<Order>() {
+//
+//                    @Override
+//                    public Order mapRow(ResultSet rs, int rowNum) throws SQLException {
+//                      Order order = new Order();
+//                      order.setId(UUID.fromString(rs.getString("ORDER_ID")));
+//                      order.setTraderId(UUID.fromString(rs.getString("TRADER_ID")));
+//                      order.setCompanyTickerSymbol(rs.getString("TICKER_SYMBOL"));
+//                      order.setOrderSide(OrderSide.valueOf(rs.getString("ORDER_SIDE")));
+//                      order.setOrderType(OrderType.valueOf(rs.getString("ORDER_TYPE")));
+//                      order.setOrderStatus(OrderStatus.valueOf(rs.getString("ORDER_STATUS")));
+//                      order.setPrice(rs.getDouble("PRICE"));
+//                      order.setVolume(rs.getInt("VOLUME"));
+//                      //order.setPlacementTime(placementTime);
+//                      return order;
+//                    }
+//
+//                }));
+//    }
+
 		
 }
 
