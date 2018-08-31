@@ -42,6 +42,22 @@ public class MarketSectorService {
 	public MarketSector getMarketSector() {
 		return new MarketSector();
 	}
+	
+	/**
+	 * Lists all market sectors
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
+	public List listMarketSectors() {
+		List marketSectorsAndAssociatedCompanies = new ArrayList<>();
+		List<MarketSector> marketSectors = marketSectorRepository.listMarketSectors();
+		for(MarketSector marketSector : marketSectors) {
+			marketSectorsAndAssociatedCompanies.add(getMarketSectorById(marketSector.getId().toString()));
+		}
+		
+		return marketSectorsAndAssociatedCompanies;
+	}
 
 	/**
 	 * Get a market sector by id
@@ -93,15 +109,7 @@ public class MarketSectorService {
 		return marketSector;
 	}
 
-	/**
-	 * Lists all market sectors
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/all", method = RequestMethod.GET)
-	public List<MarketSector> listMarketSectors() {
-		return marketSectorRepository.listMarketSectors();
-	}
+	
 
 	/**
 	 * updates a market order's description
