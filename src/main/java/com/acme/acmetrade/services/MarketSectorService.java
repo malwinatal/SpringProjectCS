@@ -57,19 +57,26 @@ public class MarketSectorService {
 
 		try {
 			UUID marketSectorUUID = UUID.fromString(marketSectorId);
-			List<MarketSector> marketSector = marketSectorRepository.getMarketSectorById(marketSectorUUID);
-
-			// if()
-
-			List<Company> companiesOfGiveSector;
+			List<MarketSector> marketSectors = marketSectorRepository.getMarketSectorById(marketSectorUUID);
+			
 			List marketSectorAndAssociatedCompanies = new ArrayList<>();
-			// marketSectorAndAssociatedCompanies.
+			
+			if(!marketSectors.isEmpty()) {
+				List<Company> companiesOfGiveSector = companyRepository.getCompaniesBySector(marketSectors.get(0));
+				
+				if(!companiesOfGiveSector.isEmpty()) {
+					marketSectorAndAssociatedCompanies.add(companiesOfGiveSector);
+				}
+			} 
+
+			
+			
+			return marketSectorAndAssociatedCompanies;
 
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("The given marketSectorId does not have the right pattern");
 		}
 
-		return null;
 
 	}
 
