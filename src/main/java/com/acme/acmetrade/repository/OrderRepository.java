@@ -25,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.acme.acmetrade.domain.OrderSide;
 import com.acme.acmetrade.domain.OrderStatus;
 import com.acme.acmetrade.domain.OrderType;
+import com.acme.acmetrade.domain.entities.Company;
 import com.acme.acmetrade.domain.entities.MarketSector;
 import com.acme.acmetrade.domain.entities.Order;
+import com.acme.acmetrade.domain.entities.Company;
 import com.acme.acmetrade.exceptions.MarketOrderNotFoundException;
 import com.acme.acmetrade.exceptions.OrderAlreadyCancelledException;
 import com.acme.acmetrade.exceptions.OrderAlreadyFulfilledException;
@@ -38,15 +40,23 @@ import com.acme.acmetrade.exceptions.OrderNotUpdatedTickerSymbolException;
 
 
 
+
+
+
+
 @Repository
 @Component
 public class OrderRepository {
 	private final JdbcTemplate jdbcTemplate;
 	
+	
+	
+	
 	@Autowired
 	public OrderRepository(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
+
 	
 	@Transactional
 	public UUID placeOrder(Order order) {
@@ -54,6 +64,8 @@ public class OrderRepository {
 			throw new OrderNegativeVolumeException("The volume of the traded order has to be a positive integer");
 		}
 		else {
+
+
 		//make the check if the ticker company name is included in the listed companies	
 		jdbcTemplate.update("insert into MARKET_ORDERS(ORDER_ID, TRADER_ID, TICKER_SYMBOL,"
 				+ 			"ORDER_SIDE, ORDER_TYPE, PRICE, VOLUME, PLACEMENT_TIME, ORDER_STATUS)"
@@ -63,8 +75,9 @@ public class OrderRepository {
 							order.getVolume(), order.getPlacementTime(), order.getOrderStatus().toString());
 		return order.getId();
 		}
+}
+		
 
-	}
 	@Transactional
 	public void cancelOrder(UUID orderId) {
 		

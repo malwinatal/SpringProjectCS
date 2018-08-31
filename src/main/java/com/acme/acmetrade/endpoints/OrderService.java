@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.acme.acmetrade.repository.CompanyRepository;
+import com.acme.acmetrade.exceptions.TickerCompanyNotExistingException;
+import com.acme.acmetrade.domain.entities.Company;
 import com.acme.acmetrade.domain.entities.Order;
 import com.acme.acmetrade.repository.OrderRepository;
 
@@ -23,9 +25,24 @@ public class OrderService {
 	private List<Order> orderList = new ArrayList<Order>();
 	@Autowired
 	private OrderRepository myDB;
+	@Autowired
+	private CompanyRepository companyRepository;
 	
 	@RequestMapping(value="/order", method = RequestMethod.POST)
 	public void placeOrder(@RequestBody Order order) {
+		String companyTicker = order.getCompanyTickerSymbol();
+		boolean doesExist = false;
+		List<Company> companyList = companyRepository.listCompanies();
+		for (Company company: companyList) {
+			String ticker = company.getTickerSymbol();
+			if (ticker.equals(companyTicker)) {
+				doesExist = true;
+			}
+		}
+		if (doesExist == false) {
+			System.out.println("Company not found");
+			throw new TickerCompanyNotExistingException("Company not listed");
+		}
 			orderList.add(order);
 			myDB.placeOrder(order);
 
