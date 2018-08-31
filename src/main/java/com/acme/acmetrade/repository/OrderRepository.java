@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -144,6 +145,12 @@ public class OrderRepository {
 			
 		}
 	}
+
+//	public void filterOrder(Map<String, String> customQuery) {
+//		// TODO Auto-generated method stub
+//		//check how to get multiple rows from a query
+//		
+//	}
 		
 }
 

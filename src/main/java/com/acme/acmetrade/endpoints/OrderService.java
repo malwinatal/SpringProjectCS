@@ -15,6 +15,7 @@ import com.acme.acmetrade.repository.OrderRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -39,4 +40,15 @@ public class OrderService {
 	public void updateOrder(@RequestBody Order order) {
 			myDB.updateOrder(order);
 	}
+//	@RequestMapping(value="/order/", method = RequestMethod.GET) //change URI
+//	public void filterOrder(@RequestParam Map<String, String> customQuery) {
+//		System.out.println(customQuery.containsKey("price"));
+//		System.out.println(customQuery.get("price"));
+//		System.out.println(customQuery.get("volume"));
+//		myDB.filterOrder(customQuery);
+//		return;
+//
+//	}
+	
+	
 }
