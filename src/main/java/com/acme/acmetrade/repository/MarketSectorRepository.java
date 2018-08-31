@@ -23,12 +23,10 @@ import com.acme.acmetrade.exceptions.MarketSectorNotFoundException;
 public class MarketSectorRepository {
 
 	private final JdbcTemplate jdbcTemplate;
-	private final CompanyRepository companyRepository;
 
 	@Autowired
-	public MarketSectorRepository(JdbcTemplate jdbcTemplate, CompanyRepository companyRepository) {
+	public MarketSectorRepository(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
-		this.companyRepository = companyRepository;
 	}
 
 	/**
@@ -116,21 +114,12 @@ public class MarketSectorRepository {
 
 	public void deleteMarketSectorById(UUID marketSectorID) {
 
-		List<MarketSector> marketSectorsWithGivenId = getMarketSectorById(marketSectorID);
+//		if (companiesOfGivenSector.isEmpty()) {
+//			jdbcTemplate.update("DELETE FROM MARKET_SECTOR where ID = ?", marketSectorID);
+//		} else {
+//			throw new CompaniesExistForGivenSectorException(marketSectorID);
+//		}
 
-		if (marketSectorsWithGivenId.isEmpty()) {
-			throw new MarketSectorNotFoundException(marketSectorID);
-		} else {
-			// we only care about the first market sector in the list (there should be only one due to unicity)
-			List<Company> companiesOfGivenSector = companyRepository
-					.getCompaniesBySector(marketSectorsWithGivenId.get(0));
-			if (companiesOfGivenSector.isEmpty()) {
-				jdbcTemplate.update("DELETE FROM MARKET_SECTOR where ID = ?", marketSectorID);
-			} else {
-				throw new CompaniesExistForGivenSectorException(marketSectorID);
-			}
-
-		}
 
 	}
 

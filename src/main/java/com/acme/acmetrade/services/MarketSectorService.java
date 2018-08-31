@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acme.acmetrade.domain.entities.Company;
 import com.acme.acmetrade.domain.entities.MarketSector;
+import com.acme.acmetrade.exceptions.MarketSectorNotFoundException;
 import com.acme.acmetrade.repository.MarketSectorRepository;
 
 @RestController
@@ -39,31 +40,32 @@ public class MarketSectorService {
 
 	/**
 	 * Get a market sector by id
+	 * 
 	 * @return
 	 */
-	@RequestMapping(value="/byId/{marketSectorId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/byId/{marketSectorId}", method = RequestMethod.GET)
 	public List getMarketSectorById(@PathVariable("marketSectorId") String marketSectorId) {
-		
-		if(marketSectorId == null || marketSectorId.isEmpty()) {
+
+		if (marketSectorId == null || marketSectorId.isEmpty()) {
 			throw new IllegalArgumentException("The given marketSectorId is not specified");
 		}
-		
+
 		try {
 			UUID marketSectorUUID = UUID.fromString(marketSectorId);
 			List<MarketSector> marketSector = marketSectorRepository.getMarketSectorById(marketSectorUUID);
-			
-			//if()
-			
+
+			// if()
+
 			List<Company> companiesOfGiveSector;
 			List marketSectorAndAssociatedCompanies = new ArrayList<>();
-			//marketSectorAndAssociatedCompanies.
-			
-		} catch(IllegalArgumentException e) {
+			// marketSectorAndAssociatedCompanies.
+
+		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("The given marketSectorId does not have the right pattern");
 		}
-		
+
 		return null;
-		
+
 	}
 
 	/**
@@ -104,7 +106,26 @@ public class MarketSectorService {
 	public void deleteMarketOrderById(@RequestParam("id") String id) {
 		if (id == null || id.trim().isEmpty())
 			throw new IllegalArgumentException("Invalid market order id provided");
-		marketSectorRepository.deleteMarketSectorById(UUID.fromString(id));
+
+		UUID marketSectorUUID = null;
+		try {
+			marketSectorUUID = UUID.fromString(id);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("id not parsable");
+		}
+
+		List<MarketSector> marketSectorsWithGivenId = marketSectorRepository.getMarketSectorById(marketSectorUUID);
+
+	
+		if (marketSectorsWithGivenId.isEmpty()) {
+			throw new MarketSectorNotFoundException(marketSectorUUID);
+		} else {
+			// we only care about the first market sector in the list (there should be only
+			// one due to unicity)
+			//List<Company> companiesOfGivenSector = companyRepository.getCompaniesBySector(marketSectorsWithGivenId.get(0));
+
+		}
+		// marketSectorRepository.deleteMarketSectorById(UUID.fromString(id));
 	}
 
 }

@@ -24,12 +24,10 @@ import com.acme.acmetrade.exceptions.CompanyNameOrTickerAlreadyExistsException;
 public class CompanyRepository {
 
 	private final JdbcTemplate jdbcTemplate;
-	private final MarketSectorRepository marketSectorRepository;
 
 	@Autowired
-	public CompanyRepository(JdbcTemplate jdbcTemplate, MarketSectorRepository marketSectorRepository) {
+	public CompanyRepository(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
-		this.marketSectorRepository = marketSectorRepository;
 	}
 
 	/**
@@ -59,25 +57,17 @@ public class CompanyRepository {
 	 * @param company
 	 */
 	@Transactional
-	public void addCompany(String companyName, String tickerSymbol, UUID sectorId) {
+	public void addCompany(String companyName, String tickerSymbol, MarketSector marketSector) {
 
-		List<MarketSector> marketSectorsWithGivenID = marketSectorRepository.getMarketSectorById(sectorId);
+		List<Company> companiesWithGivenNameAndTicker = getCompaniesByNameAndTicker(companyName, tickerSymbol,
+				marketSector);
 
-		if (marketSectorsWithGivenID.isEmpty()) {
-			throw new MarketSectorNotFoundException(sectorId);
+		if (companiesWithGivenNameAndTicker.isEmpty()) {
+			jdbcTemplate.update("insert into COMPANY(ID, NAME, MARKET_SECTOR_ID, TICKER_SYMBOL) values (?,?,?,?)",
+					UUID.randomUUID(), companyName, marketSector.getId(), tickerSymbol);
 		} else {
-			List<Company> companiesWithGivenNameAndTicker = getCompaniesByNameAndTicker(companyName, tickerSymbol,
-					marketSectorsWithGivenID.get(0));
-
-			if (companiesWithGivenNameAndTicker.isEmpty()) {
-				jdbcTemplate.update("insert into COMPANY(ID, NAME, MARKET_SECTOR_ID, TICKER_SYMBOL) values (?,?,?,?)",
-						UUID.randomUUID(), companyName, sectorId, tickerSymbol);
-			} else {
-				throw new CompanyNameOrTickerAlreadyExistsException();
-			}
-
+			throw new CompanyNameOrTickerAlreadyExistsException();
 		}
-
 	}
 
 	/**

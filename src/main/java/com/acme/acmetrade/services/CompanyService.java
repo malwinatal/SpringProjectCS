@@ -11,17 +11,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acme.acmetrade.domain.entities.Company;
+import com.acme.acmetrade.domain.entities.MarketSector;
+import com.acme.acmetrade.exceptions.MarketSectorNotFoundException;
 import com.acme.acmetrade.repository.CompanyRepository;
+import com.acme.acmetrade.repository.MarketSectorRepository;
 
 @RestController
 @RequestMapping("/company")
 public class CompanyService {
 
 	private CompanyRepository companyRepository;
+	private MarketSectorRepository marketSectorRepository;
 
 	@Autowired
-	public CompanyService(CompanyRepository companyRepository) {
+	public CompanyService(CompanyRepository companyRepository, MarketSectorRepository marketSectorRepository) {
 		this.companyRepository = companyRepository;
+		this.marketSectorRepository = marketSectorRepository;
 	}
 
 	/**
@@ -40,11 +45,12 @@ public class CompanyService {
 	 * @param Company
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST)
-	public Company createCompany(@RequestBody Company Company) {
-		// CompanyRepository.addCompany(Company);
-		return Company;
-	}
+	// not in use
+//	@RequestMapping(method = RequestMethod.POST)
+//	public Company createCompany(@RequestBody Company Company) {
+//		// CompanyRepository.addCompany(Company);
+//		return Company;
+//	}
 
 	/**
 	 * Create a Company based on data given by the user in the URL
@@ -68,7 +74,16 @@ public class CompanyService {
 		} else {
 			try {
 				UUID marketSectorUuid = UUID.fromString(marketSectorId);
-				companyRepository.addCompany(companyName, tickerSymbol, marketSectorUuid);
+				
+				List<MarketSector> marketSectorsWithGivenID = marketSectorRepository.getMarketSectorById(marketSectorUuid);
+				
+				if (marketSectorsWithGivenID.isEmpty()) {
+					throw new MarketSectorNotFoundException(marketSectorUuid);
+				} else {
+					companyRepository.addCompany(companyName, tickerSymbol, marketSectorsWithGivenID.get(0));
+				}
+
+				
 			} catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException("MarketSector ID has a bad format");
 			}
