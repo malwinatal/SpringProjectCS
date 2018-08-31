@@ -62,6 +62,7 @@ public class MarketSectorService {
 			List marketSectorAndAssociatedCompanies = new ArrayList<>();
 			
 			if(!marketSectors.isEmpty()) {
+				marketSectorAndAssociatedCompanies.add(marketSectors.get(0));
 				List<Company> companiesOfGiveSector = companyRepository.getCompaniesBySector(marketSectors.get(0));
 				
 				if(!companiesOfGiveSector.isEmpty()) {
