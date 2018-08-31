@@ -76,7 +76,8 @@ public class MarketSectorRepository {
 	 */
 	@Transactional
 	public List<MarketSector> getMarketSectorByName(String name) {
-		List<MarketSector> marketSectors = jdbcTemplate.query("select * from MARKET_SECTOR where NAME = '" + name + "'",
+		List<MarketSector> marketSectors = jdbcTemplate.query("select * from MARKET_SECTOR where NAME = ?",
+				new Object[] { name },
 				new RowMapper<MarketSector>() {
 					@Override
 					public MarketSector mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -114,6 +115,7 @@ public class MarketSectorRepository {
 
 	/**
 	 * Deletes market Sector with given id
+	 * 
 	 * @param marketSectorID
 	 */
 	public void deleteMarketSectorById(UUID marketSectorID) {
@@ -130,8 +132,8 @@ public class MarketSectorRepository {
 	 */
 	@Transactional
 	public List<MarketSector> getMarketSectorById(UUID id) {
-		List<MarketSector> marketSectors = jdbcTemplate.query("select * from MARKET_SECTOR where ID = '" + id + "'",
-				new RowMapper<MarketSector>() {
+		List<MarketSector> marketSectors = jdbcTemplate.query("select * from MARKET_SECTOR where ID = ?",
+				new Object[] { id }, new RowMapper<MarketSector>() {
 					@Override
 					public MarketSector mapRow(ResultSet rs, int rowNum) throws SQLException {
 						MarketSector marketSector = new MarketSector();
