@@ -112,14 +112,13 @@ public class MarketSectorRepository {
 
 	}
 
+	/**
+	 * Deletes market Sector with given id
+	 * @param marketSectorID
+	 */
 	public void deleteMarketSectorById(UUID marketSectorID) {
 
-//		if (companiesOfGivenSector.isEmpty()) {
-//			jdbcTemplate.update("DELETE FROM MARKET_SECTOR where ID = ?", marketSectorID);
-//		} else {
-//			throw new CompaniesExistForGivenSectorException(marketSectorID);
-//		}
-
+		jdbcTemplate.update("DELETE FROM MARKET_SECTOR where ID = ?", marketSectorID);
 
 	}
 

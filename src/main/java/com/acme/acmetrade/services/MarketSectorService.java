@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acme.acmetrade.domain.entities.Company;
 import com.acme.acmetrade.domain.entities.MarketSector;
+import com.acme.acmetrade.exceptions.CompaniesExistForGivenSectorException;
 import com.acme.acmetrade.exceptions.MarketSectorNotFoundException;
+import com.acme.acmetrade.repository.CompanyRepository;
 import com.acme.acmetrade.repository.MarketSectorRepository;
 
 @RestController
@@ -22,10 +24,13 @@ import com.acme.acmetrade.repository.MarketSectorRepository;
 public class MarketSectorService {
 
 	private MarketSectorRepository marketSectorRepository;
+	
+	private CompanyRepository companyRepository;
 
 	@Autowired
-	public MarketSectorService(MarketSectorRepository marketSectorRepository) {
+	public MarketSectorService(MarketSectorRepository marketSectorRepository, CompanyRepository companyRepository) {
 		this.marketSectorRepository = marketSectorRepository;
+		this.companyRepository = companyRepository;
 	}
 
 	/**
@@ -102,6 +107,10 @@ public class MarketSectorService {
 		return marketSector;
 	}
 
+	/**
+	 * Deletes a market sector by id
+	 * @param id
+	 */
 	@RequestMapping(method = RequestMethod.DELETE)
 	public void deleteMarketOrderById(@RequestParam("id") String id) {
 		if (id == null || id.trim().isEmpty())
@@ -122,7 +131,13 @@ public class MarketSectorService {
 		} else {
 			// we only care about the first market sector in the list (there should be only
 			// one due to unicity)
-			//List<Company> companiesOfGivenSector = companyRepository.getCompaniesBySector(marketSectorsWithGivenId.get(0));
+			List<Company> companiesOfGivenSector = companyRepository.getCompaniesBySector(marketSectorsWithGivenId.get(0));
+			
+			if (companiesOfGivenSector.isEmpty()) {
+				marketSectorRepository.deleteMarketSectorById(marketSectorUUID);
+			} else {
+				throw new CompaniesExistForGivenSectorException(marketSectorUUID);
+			}
 
 		}
 		// marketSectorRepository.deleteMarketSectorById(UUID.fromString(id));

@@ -108,9 +108,9 @@ public class CompanyService {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.PATCH)
-	public Company updateCompanyName(@RequestBody Company Company) {
+	public Company updateCompanyName(@RequestBody Company company) {
 		//companyRepository.updateCompanyName(Company);
-		return Company;
+		return company;
 	}
 
 }
