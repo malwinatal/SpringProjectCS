@@ -70,16 +70,18 @@ public class CompanyRepository {
 		}
 	}
 
-	/**
-	 * Looks up for a company by name and ticker symbol
-	 * 
-	 * @param name
-	 * @return
-	 */
+
+/**
+ * Looks up for a company by name and ticker symbol
+ * @param companyName
+ * @param tickerSymbol
+ * @param marketSector
+ * @return
+ */
 	@Transactional
 	public List<Company> getCompaniesByNameAndTicker(String companyName, String tickerSymbol,
 			MarketSector marketSector) {
-		List<Company> Company = jdbcTemplate.query(
+		List<Company> companies = jdbcTemplate.query(
 				"select * from COMPANY where NAME = '" + companyName + "' OR TICKER_SYMBOL = '" + tickerSymbol + "'",
 				new RowMapper<Company>() {
 					@Override
@@ -92,15 +94,38 @@ public class CompanyRepository {
 						return Company;
 					}
 				});
-		if (Company == null) {
+		if (companies == null) {
 			return new ArrayList<Company>();
 		}
-		return Company;
+		return companies;
 	}
 
-	public List<Company> listCompany() {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Lists all companies in the database
+	 * @return
+	 */
+	public List<Company> listCompanies() {
+		List<Company> companies = jdbcTemplate.query(
+				"select * from COMPANY c, MARKET_SECTOR ms where c.market_sector_id = ms.id",
+				new RowMapper<Company>() {
+					@Override
+					public Company mapRow(ResultSet rs, int rowNum) throws SQLException {
+						Company Company = new Company();
+						MarketSector marketSector = new MarketSector();
+						marketSector.setId(UUID.fromString(rs.getString("MARKET_SECTOR.ID")));
+						marketSector.setName(rs.getString("MARKET_SECTOR.NAME"));
+						marketSector.setDescription(rs.getString("MARKET_SECTOR.DESCRIPTION"));
+						Company.setId(UUID.fromString(rs.getString("COMPANY.ID")));
+						Company.setName(rs.getString("COMPANY.NAME"));
+						Company.setMarketSector(marketSector);
+						Company.setTickerSymbol(rs.getString("COMPANY.TICKER_SYMBOL"));
+						return Company;
+					}
+				});
+		if (companies == null) {
+			return new ArrayList<Company>();
+		}
+		return companies;
 	}
 
 }

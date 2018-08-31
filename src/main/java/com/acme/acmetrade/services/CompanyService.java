@@ -40,19 +40,6 @@ public class CompanyService {
 	}
 
 	/**
-	 * Create a Company based on data given by the user
-	 * 
-	 * @param Company
-	 * @return
-	 */
-	// not in use
-//	@RequestMapping(method = RequestMethod.POST)
-//	public Company createCompany(@RequestBody Company Company) {
-//		// CompanyRepository.addCompany(Company);
-//		return Company;
-//	}
-
-	/**
 	 * Create a Company based on data given by the user in the URL
 	 * 
 	 * @param Company
@@ -61,29 +48,28 @@ public class CompanyService {
 	@RequestMapping(method = RequestMethod.POST)
 	public void createCompany(@RequestParam("name") String companyName,
 			@RequestParam("tickersymbol") String tickerSymbol, @RequestParam("sectorId") String marketSectorId) {
-		// TODO: If at least one parameter is missing or does not have a value, throw
-		// exception
+
 		if (companyName == null || companyName.isEmpty())
-			throw new IllegalArgumentException("Argument Companyname is missing");
+			throw new IllegalArgumentException("Argument companyName is missing");
 
 		if (tickerSymbol == null || tickerSymbol.isEmpty())
-			throw new IllegalArgumentException("Argument Tickersymbol is missing");
+			throw new IllegalArgumentException("Argument tickerSymbol is missing");
 
 		if (marketSectorId == null || marketSectorId.isEmpty()) {
-
+			throw new IllegalArgumentException("Argument sectorId is missing");
 		} else {
 			try {
 				UUID marketSectorUuid = UUID.fromString(marketSectorId);
-				
-				List<MarketSector> marketSectorsWithGivenID = marketSectorRepository.getMarketSectorById(marketSectorUuid);
-				
+
+				List<MarketSector> marketSectorsWithGivenID = marketSectorRepository
+						.getMarketSectorById(marketSectorUuid);
+
 				if (marketSectorsWithGivenID.isEmpty()) {
 					throw new MarketSectorNotFoundException(marketSectorUuid);
 				} else {
 					companyRepository.addCompany(companyName, tickerSymbol, marketSectorsWithGivenID.get(0));
 				}
 
-				
 			} catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException("MarketSector ID has a bad format");
 			}
@@ -98,7 +84,7 @@ public class CompanyService {
 	 */
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public List<Company> listCompany() {
-		return companyRepository.listCompany();
+		return companyRepository.listCompanies();
 	}
 
 	/**
@@ -109,7 +95,7 @@ public class CompanyService {
 	 */
 	@RequestMapping(method = RequestMethod.PATCH)
 	public Company updateCompanyName(@RequestBody Company company) {
-		//companyRepository.updateCompanyName(Company);
+		// companyRepository.updateCompanyName(Company);
 		return company;
 	}
 
